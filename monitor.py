@@ -38,8 +38,6 @@ class Capture():
         self.w_sunrise = ''
         self.w_sunset = ''
 
-
-
     def update_weather(self):
         weather_res = response(weather_url)
         weather_res = weather_res.decode('utf-8')
@@ -57,16 +55,6 @@ class Capture():
         sunset = int(obj['sys']['sunset']) - 1507586428
         self.w_sunrise = str(int(sunrise/3600)) + ':' + str(int(sunrise%3600/60))
         self.w_sunset = str(int(sunrise/3600)) + ':' + str(int(sunrise%3600/60))
-
-        print(self.w_main)
-        print(self.w_description)
-        print('Clouds: ',self.w_clouds)
-        print('Humidity: ',self.w_humidity)
-        print('Wind: ',self.w_wind_speed, 'm/s')
-        print('Wind: ',self.w_wind_angle, 'deg')
-        print('Temp: ', self.w_temperature, ' celcius')
-        print('Sunrise: ', self.w_sunrise)
-        print('Sunset: ', self.w_sunset)
 
 
 
@@ -92,9 +80,19 @@ class Capture():
         self.speed = data[2]
         self.temperature = data[3]
 
+    def printAll(self):
+        print(self.w_main)
+        print(self.w_description)
+        print('Clouds: ',self.w_clouds)
+        print('Humidity: ',self.w_humidity)
+        print('Wind: ',self.w_wind_speed, 'm/s')
+        print('Wind: ',self.w_wind_angle, 'deg')
+        print('Temp: ', self.w_temperature, ' celcius')
+        print('Sunrise: ', self.w_sunrise)
+        print('Sunset: ', self.w_sunset)
 
-test = Capture()
-test.update_weather()
+# test = Capture()
+# test.update_weather()
 
 
 #
@@ -118,14 +116,21 @@ test.update_weather()
 #
 #     print(mon.time,'\t', mon.speed, ' ',mon.density, '\t ', mon.bz)
 #
-#
-# if __name__ == "__main__":
-#     print('Time\t\t Speed\t Density  Bz')
-#     while(1):
-#         try:
-#             monitor()
-#         except:
-#             pass
-#         time.sleep(30)
+
+def run(monitor):
+    while(1):
+        monitor.update_weather()
+        i = 1
+        while i < 15:
+            monitor.update_plama()
+            monitor.update_magnitude()
+            monitor.printAll()
+            i += 1
+            time.sleep(60)
+
+if __name__ == "__main__":
+    print('Time\t\t Speed\t Density  Bz')
+    monitor = Capture()
+    run(monitor)
 
 # print(json.loads(mag_res[0].decode('utf-8')))
