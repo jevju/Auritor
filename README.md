@@ -1,1 +1,1 @@
-# Auritor, an aurora monitor
+# Auritor, an Aurora Monitor
