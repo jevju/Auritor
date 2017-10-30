@@ -1,1 +1,1 @@
-# aurora_monitor
+# Auritor, an aurora monitor
