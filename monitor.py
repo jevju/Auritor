@@ -15,46 +15,55 @@ def response(url):
 
 class Capture():
     def __init__(self):
-        self.content_plasma = ""
-        self.content_magnitude = ""
-        self.content_weather = ""
-        self.date = ''
-        self.time = ''
-        self.speed = ''
-        self.density = ''
-        self.bz = ''
-        self.bt = ''
-        self.lat = ''
-        self.long = ''
-        self.temperature = ''
 
-        self.w_main = ''
-        self.w_description = ''
-        self.w_humidity = ''
-        self.w_wind_speed = ''
-        self.w_wind_angle = ''
-        self.w_clouds = ''
-        self.w_temperature = ''
-        self.w_sunrise = ''
-        self.w_sunset = ''
+        self.plasma_vars = {
+            'date': None,
+            'time': None,
+            'speed': None,
+            'density': None,
+            'temperature': None
+        }
+
+        self.magnitude_vars = {
+            'date': None,
+            'time': None,
+            'bz': None,
+            'bt': None,
+            'lat': None,
+            'long': None
+        }
+
+        self.weather_vars = {
+            'main': None,
+            'description': None,
+            'humidity': None,
+            'wind_speed': None,
+            'wind_angle': None,
+            'wind_clouds': None,
+            'temperature': None,
+            'sunrise': None,
+            'sunset': None
+        }
+
+        self.kp = None
 
     def update_weather(self):
         weather_res = response(weather_url)
         weather_res = weather_res.decode('utf-8')
 
         obj = json.loads(weather_res)
-        self.w_main = obj['weather'][0]['main']
-        self.w_description = obj['weather'][0]['description']
-        self.w_humidity = obj['main']['humidity']
-        self.w_wind_speed = obj['wind']['speed']
-        self.w_wind_angle = obj['wind']['deg']
-        self.w_clouds = obj['clouds']['all']
-        self.w_temperature = str(int(obj['main']['temp']) - 273)
+        self.weather_vars['main'] = obj['weather'][0]['main']
+        self.weather_vars['description'] = obj['weather'][0]['description']
+        self.weather_vars['humidity'] = obj['main']['humidity']
+        self.weather_vars['wind_speed'] = obj['wind']['speed']
+        self.weather_vars['wind_angle'] = obj['wind']['deg']
+        self.weather_vars['wind_clouds'] = obj['clouds']['all']
+        self.weather_vars['temperature'] = str(int(obj['main']['temp']) - 273)
 
         sunrise = int(obj['sys']['sunrise']) - 1507586428
         sunset = int(obj['sys']['sunset']) - 1507586428
-        self.w_sunrise = str(int(sunrise/3600)) + ':' + str(int(sunrise%3600/60))
-        self.w_sunset = str(int(sunrise/3600)) + ':' + str(int(sunrise%3600/60))
+        self.weather_vars['sunrise'] = str(int(sunrise/3600)) + ':' + str(int(sunrise%3600/60))
+        self.weather_vars['sunset'] = str(int(sunrise/3600)) + ':' + str(int(sunrise%3600/60))
 
     def update_magnitude(self):
         mag_res = response(mag_url)
@@ -62,11 +71,11 @@ class Capture():
         obj = json.loads(mag_res)
         data = obj[2]
 
-        self.date, self.time = data[0].split(' ')
-        self.bz = data[3]
-        self.long = data[4]
-        self.lat = data[5]
-        self.bt = data[6]
+        self.magnitude_vars['date'], self.magnitude_vars['time'] = data[0].split(' ')
+        self.magnitude_vars['bz'] = data[3]
+        self.magnitude_vars['long'] = data[4]
+        self.magnitude_vars['lat'] = data[5]
+        self.magnitude_vars['bt'] = data[6]
 
     def update_plama(self):
         plasma_res = response(plasma_url)
@@ -74,9 +83,9 @@ class Capture():
         pla = json.loads(plasma_res)
         data = pla[2]
 
-        self.density = data[1]
-        self.speed = data[2]
-        self.temperature = data[3]
+        self.plasma_vars['density'] = data[1]
+        self.plasma_vars['speed'] = data[2]
+        self.plasma_vars['temperature'] = data[3]
 
     def update_kp(self):
         kp_res = response(kp_url)
@@ -102,31 +111,15 @@ class Capture():
         print('Speed: ', self.speed)
         print('Bz: ', self.bz)
 
-# test = Capture()utf-8
-# test.update_weather()
+    def create_json(self):
+        weather = {}
+        magnitude = {}
+        plasma = {}
+        dic = {}
 
 
-#
-# def monitor():
-#     mag_res = response(mag_url)
-#     mag_res = mag_res.decode('utf-8')
-#
-#     plasma_res = response(plasma_url)
-#     plasma_res = plasma_res.decode('utf-8')
-#
-#     obj = json.loads(mag_res)
-#     captions = obj[0]
-#     data1 = obj[1]
-#     data2 = obj[2]
-#
-#     pla = json.loads(plasma_res)
-#
-#
-#
-#     mon = Capture(obj[2], pla[2])
-#
-#     print(mon.time,'\t', mon.speed, ' ',mon.density, '\t ', mon.bz)
-#
+
+
 
 def run(monitor):
     # print(monitor.update_kp())
@@ -143,6 +136,10 @@ def run(monitor):
 if __name__ == "__main__":
     print('Time\t\t Speed\t Density  Bz')
     monitor = Capture()
-    run(monitor)
+    # run(monitor)
+    monitor.update_plama()
+    print(monitor.plasma_vars)
+    monitor.update_magnitude()
+    print(monitor.magnitude_vars)
 
 # print(json.loads(mag_res[0].decode('utf-8')))
