@@ -81,26 +81,35 @@ class Capture():
     def update_kp(self):
         kp_res = response(kp_url)
         kp_res = kp_res.decode('utf-8')
+        obj = json.loads(kp_res)
+        data = obj[1]
 
+        self.kp_date, self.kp_time = data[0].split(' ')
+        self.kp_time = self.kp_time.split(':')
+        self.kp_time = self.kp_time[0] +(':')+ self.kp_time[1]
+        self.kp = data[1]
+
+        print('date: ', self.kp_date)
+        print('time: ', self.kp_time)
+        print('kp: ', self.kp)
         # print(type(kp_res.decode('utf-8')))
-        kp = json.loads(kp_res)
-        print(kp)
 
-    def printAll(self):
-        print(self.w_main)
-        print(self.w_description)
-        print('--- Weather ----')
-        print('Clouds: ',self.w_clouds)
-        print('Humidity: ',self.w_humidity)
-        # print('Wind: ',self.w_wind_speed, 'm/s')
-        # print('Wind: ',self.w_wind_angle, 'deg')
-        # print('Temp: ', self.w_temperature, ' celcius')
-        # print('Sunrise: ', self.w_sunrise)
-        # print('Sunset: ', self.w_sunset)
-        print('--- Aurora ---')
-        print('Density: ', self.density)
-        print('Speed: ', self.speed)
-        print('Bz: ', self.bz)
+
+    # def printAll(self):
+    #     print(self.w_main)
+    #     print(self.w_description)
+    #     print('--- Weather ----')
+    #     print('Clouds: ',self.w_clouds)
+    #     print('Humidity: ',self.w_humidity)
+    #     # print('Wind: ',self.w_wind_speed, 'm/s')
+    #     # print('Wind: ',self.w_wind_angle, 'deg')
+    #     # print('Temp: ', self.w_temperature, ' celcius')
+    #     # print('Sunrise: ', self.w_sunrise)
+    #     # print('Sunset: ', self.w_sunset)
+    #     print('--- Aurora ---')
+    #     print('Density: ', self.density)
+    #     print('Speed: ', self.speed)
+    #     print('Bz: ', self.bz)
 
 # test = Capture()utf-8
 # test.update_weather()
@@ -131,12 +140,13 @@ class Capture():
 def run(monitor):
     # print(monitor.update_kp())
     while(1):
-        monitor.update_weather()
+        # monitor.update_weather()
         i = 1
         while i < 15:
             monitor.update_plama()
             monitor.update_magnitude()
-            monitor.printAll()
+            monitor.update_kp()
+            # monitor.printAll()
             i += 1
             time.sleep(60)
 
