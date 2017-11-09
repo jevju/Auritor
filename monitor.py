@@ -7,11 +7,11 @@ api_key_weather = 'd854e74a8cb4e5736b93589aa0e75716'
 mag_url = 'http://services.swpc.noaa.gov/products/solar-wind/mag-5-minute.json'
 plasma_url = 'http://services.swpc.noaa.gov/products/solar-wind/plasma-5-minute.json'
 weather_url = 'http://api.openweathermap.org/data/2.5/weather?q=tromso,no&appid=' + api_key_weather
+kp_url = 'http://services.swpc.noaa.gov/products/noaa-planetary-k-index.json'
 
 def response(url):
     with urllib.request.urlopen(url) as response:
         return response.read()
-
 
 class Capture():
     def __init__(self):
@@ -56,8 +56,6 @@ class Capture():
         self.w_sunrise = str(int(sunrise/3600)) + ':' + str(int(sunrise%3600/60))
         self.w_sunset = str(int(sunrise/3600)) + ':' + str(int(sunrise%3600/60))
 
-
-
     def update_magnitude(self):
         mag_res = response(mag_url)
         mag_res = mag_res.decode('utf-8')
@@ -80,18 +78,31 @@ class Capture():
         self.speed = data[2]
         self.temperature = data[3]
 
+    def update_kp(self):
+        kp_res = response(kp_url)
+        kp_res = kp_res.decode('utf-8')
+
+        # print(type(kp_res.decode('utf-8')))
+        kp = json.loads(kp_res)
+        print(kp)
+
     def printAll(self):
         print(self.w_main)
         print(self.w_description)
+        print('--- Weather ----')
         print('Clouds: ',self.w_clouds)
         print('Humidity: ',self.w_humidity)
-        print('Wind: ',self.w_wind_speed, 'm/s')
-        print('Wind: ',self.w_wind_angle, 'deg')
-        print('Temp: ', self.w_temperature, ' celcius')
-        print('Sunrise: ', self.w_sunrise)
-        print('Sunset: ', self.w_sunset)
+        # print('Wind: ',self.w_wind_speed, 'm/s')
+        # print('Wind: ',self.w_wind_angle, 'deg')
+        # print('Temp: ', self.w_temperature, ' celcius')
+        # print('Sunrise: ', self.w_sunrise)
+        # print('Sunset: ', self.w_sunset)
+        print('--- Aurora ---')
+        print('Density: ', self.density)
+        print('Speed: ', self.speed)
+        print('Bz: ', self.bz)
 
-# test = Capture()
+# test = Capture()utf-8
 # test.update_weather()
 
 
@@ -118,6 +129,7 @@ class Capture():
 #
 
 def run(monitor):
+    # print(monitor.update_kp())
     while(1):
         monitor.update_weather()
         i = 1
