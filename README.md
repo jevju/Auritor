@@ -1,6 +1,6 @@
 # Auritor, an aurora monitor
 
-Monitor the aurora borealis activity live by use of sattelite data. 
+Monitor the aurora borealis activity live by use of satellite data. 
 
 Completed:
 - API
