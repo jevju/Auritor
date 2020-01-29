@@ -8,3 +8,4 @@ Completed:
 TODO:
 - Web interface
 - Alert system when activity peaks
+- Store data to create historical charts
